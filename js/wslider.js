@@ -41,7 +41,7 @@
             this.alternateTransitions = true;
           } else {
             this.transition = slides_trans;
-            if (this.transition > 4) {
+            if (this.transition > 5) {
               this.transition = 0;
             }
           }
@@ -156,7 +156,7 @@
         this.dirty = false;
         if (this.alternateTransitions) {
           this.transition += 1;
-          if (this.transition > 4) {
+          if (this.transition > 5) {
             this.transition = 0;
           }
         }
@@ -165,7 +165,7 @@
     };
 
     CardWidget.prototype.render = function(image) {
-      var box, cx, x, y, _fn, _i, _len, _ref,
+      var box, cx, dx, lCx, x, y, _fn, _fn1, _i, _j, _len, _len1, _ref, _ref1,
         _this = this;
       cx = this.canvas.getContext('2d');
       x = this.canvas.width * .5;
@@ -221,6 +221,72 @@
             if (Math.round(this.lastRec.z * 1000) >= 1000) {
               this.recs = void 0;
               return this.curAlpha = 1;
+            }
+          }
+          break;
+        case 5:
+          if (this.recs === void 0) {
+            this.B = 64;
+            this.ZERO = 0;
+            if (this.canvas.width % this.B > 0) {
+              this.ZERO = this.canvas.width - (1 + Math.round(this.canvas.width / this.B)) * this.B;
+            }
+            this.recs = [];
+            this.recX = this.canvas.width - this.B;
+            this.recY = -this.B;
+            this.recAddBloco = true;
+            this.lastRec = false;
+            if (this.lastImageRendered === void 0) {
+              this.lastImageRendered = document.createElement("canvas");
+              this.lastImageRendered.width = this.canvas.width;
+              this.lastImageRendered.height = this.canvas.height;
+            }
+            lCx = this.lastImageRendered.getContext('2d');
+            lCx.drawImage(this.canvas, 0, 0);
+          }
+          if (this.recAddBloco) {
+            dx = this.recX;
+            if (dx < 0) {
+              dx = 0;
+            }
+            this.recs.push({
+              x: dx,
+              y: this.recY,
+              z: 0
+            });
+            this.recY += this.B;
+            if (this.recY > this.canvas.height) {
+              this.recY = 0;
+              this.recX -= this.B;
+              if (this.recX < this.ZERO) {
+                this.recAddBloco = false;
+                this.lastRec = this.recs[this.recs.length - 1];
+              }
+            }
+          }
+          cx.strokeStyle = "#dfd";
+          cx.globalAlpha = 1;
+          cx.drawImage(this.lastImageRendered, 0, 0);
+          cx.lineWidth = 2;
+          _ref1 = this.recs;
+          _fn1 = function(box) {
+            box.z += (1 - box.z) * .13;
+            cx.globalAlpha = 1;
+            cx.drawImage(image, box.x + _this.B * .5 - _this.B * .5 * box.z, box.y + _this.B * .5 - _this.B * .5 * box.z, _this.B * box.z, _this.B * box.z, box.x + _this.B * .5 - _this.B * .5 * box.z, box.y + _this.B * .5 - _this.B * .5 * box.z, _this.B * box.z, _this.B * box.z);
+            cx.globalAlpha = 1 - box.z;
+            return cx.strokeRect(box.x + 1, box.y + 1, _this.B - 2, _this.B - 2);
+          };
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            box = _ref1[_j];
+            _fn1(box);
+          }
+          this.curAlpha = 0;
+          if (this.lastRec) {
+            if (Math.round(this.lastRec.z * 1000) >= 1000) {
+              this.recs = void 0;
+              this.curAlpha = 1;
+              cx.globalAlpha = 1;
+              return cx.lineWidth = 0;
             }
           }
       }

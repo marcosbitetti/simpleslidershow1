@@ -27,7 +27,7 @@ class CardWidget
 					@alternateTransitions = true
 				else
 					@transition = slides_trans
-					if @transition>4
+					if @transition>5
 						@transition = 0
 		catch err
 		try
@@ -112,7 +112,7 @@ class CardWidget
 			@dirty = false
 			if @alternateTransitions
 				@transition += 1
-				if @transition > 4
+				if @transition > 5
 					@transition=0
 		@render(@imagens[@curImage])
 
@@ -174,6 +174,60 @@ class CardWidget
 					if Math.round(@lastRec.z*1000)>=1000
 						@recs = undefined
 						@curAlpha = 1
+			when 5 # bonitao 2
+				if @recs == undefined
+					@B = 64
+					@ZERO = 0
+					if @canvas.width%@B > 0
+						@ZERO = @canvas.width - (1+Math.round(@canvas.width/@B))*@B
+					@recs = []
+					@recX = @canvas.width-@B
+					@recY = -@B
+					@recAddBloco = true
+					@lastRec = false
+					if @lastImageRendered == undefined
+						@lastImageRendered = document.createElement "canvas"
+						@lastImageRendered.width = @canvas.width
+						@lastImageRendered.height = @canvas.height
+					lCx = @lastImageRendered.getContext '2d'
+					lCx.drawImage @canvas,0,0
+				if @recAddBloco
+					dx = @recX
+					dx = 0 if dx<0
+					@recs.push
+							x:dx
+							y:@recY
+							z:0
+					@recY += @B
+					if @recY>@canvas.height
+						@recY = 0
+						@recX -= @B
+						if @recX<@ZERO
+							@recAddBloco = false
+							@lastRec = @recs[@recs.length-1]
+							#alert @lastRec.x
+				cx.strokeStyle = "#dfd"
+				cx.globalAlpha = 1
+				cx.drawImage @lastImageRendered,0,0
+				cx.lineWidth = 2
+				for box in @recs
+					do (box) =>
+						box.z += (1-box.z) * .13
+						cx.globalAlpha = 1
+						cx.drawImage image,
+							box.x+@B*.5-@B*.5*box.z, box.y+@B*.5-@B*.5*box.z,
+							@B*box.z,@B*box.z,
+							box.x+@B*.5-@B*.5*box.z, box.y+@B*.5-@B*.5*box.z,
+							@B*box.z,@B*box.z
+						cx.globalAlpha = 1 - box.z
+						cx.strokeRect box.x+1,box.y+1, @B-2,@B-2
+				@curAlpha = 0
+				if @lastRec
+					if Math.round(@lastRec.z*1000)>=1000
+						@recs = undefined
+						@curAlpha = 1
+						cx.globalAlpha = 1
+						cx.lineWidth = 0
 
 
 
