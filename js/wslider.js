@@ -209,8 +209,25 @@
           }
           _ref = this.recs;
           _fn = function(box) {
+            var xa, xb, ya, yb;
             box.z += (1 - box.z) * .13;
-            return cx.drawImage(image, box.x + _this.B * .5 - _this.B * .5 * box.z, box.y + _this.B * .5 - _this.B * .5 * box.z, _this.B * box.z, _this.B * box.z, box.x + _this.B * .5 - _this.B * .5 * box.z, box.y + _this.B * .5 - _this.B * .5 * box.z, _this.B * box.z, _this.B * box.z);
+            xa = box.x + _this.B * .5 - _this.B * .5 * box.z;
+            ya = box.y + _this.B * .5 - _this.B * .5 * box.z;
+            xb = _this.B * box.z;
+            yb = _this.B * box.z;
+            if (xa < 0) {
+              xa = 0;
+            }
+            if (ya < 0) {
+              ya = 0;
+            }
+            if (xb < 0) {
+              xb = 0;
+            }
+            if (yb < 0) {
+              yb = 0;
+            }
+            return cx.drawImage(image, xa, ya, xb, yb, xa, ya, xb, yb);
           };
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             box = _ref[_i];
@@ -270,11 +287,46 @@
           cx.lineWidth = 2;
           _ref1 = this.recs;
           _fn1 = function(box) {
+            var xa, xb, ya, yb;
             box.z += (1 - box.z) * .13;
             cx.globalAlpha = 1;
-            cx.drawImage(image, box.x + _this.B * .5 - _this.B * .5 * box.z, box.y + _this.B * .5 - _this.B * .5 * box.z, _this.B * box.z, _this.B * box.z, box.x + _this.B * .5 - _this.B * .5 * box.z, box.y + _this.B * .5 - _this.B * .5 * box.z, _this.B * box.z, _this.B * box.z);
+            /*
+            						cx.drawImage image,
+            							box.x+@B*.5-@B*.5*box.z, box.y+@B*.5-@B*.5*box.z,
+            							@B*box.z,@B*box.z,
+            							box.x+@B*.5-@B*.5*box.z, box.y+@B*.5-@B*.5*box.z,
+            							@B*box.z,@B*box.z
+            */
+
+            xa = box.x + _this.B * .5 - _this.B * .5 * box.z;
+            ya = box.y + _this.B * .5 - _this.B * .5 * box.z;
+            xb = _this.B * box.z;
+            yb = _this.B * box.z;
+            if (xa < 0) {
+              xa = 0;
+            }
+            if (ya < 0) {
+              ya = 0;
+            }
+            if (xb < 0) {
+              xb = 0;
+            }
+            if (yb < 0) {
+              yb = 0;
+            }
+            cx.drawImage(image, xa, ya, xb, yb, xa, ya, xb, yb);
             cx.globalAlpha = 1 - box.z;
-            return cx.strokeRect(box.x + 1, box.y + 1, _this.B - 2, _this.B - 2);
+            xa = box.x + 1;
+            ya = box.y + 1;
+            if (xa < 0) {
+              xa = 0;
+            }
+            if (ya < 0) {
+              ya = 0;
+            }
+            if (_this.recs.length > 1) {
+              return cx.strokeRect(xa, ya, _this.B - 2, _this.B - 2);
+            }
           };
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             box = _ref1[_j];

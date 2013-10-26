@@ -121,6 +121,7 @@ class CardWidget
 		cx = @canvas.getContext '2d'
 		x = @canvas.width*.5
 		y = @canvas.height*.5
+
 		switch @transition
 			when 0 # fade in
 				cx.globalAlpha = @curAlpha
@@ -164,11 +165,19 @@ class CardWidget
 				for box in @recs
 					do (box) =>
 						box.z += (1-box.z) * .13
+						xa = box.x+@B*.5-@B*.5*box.z
+						ya = box.y+@B*.5-@B*.5*box.z
+						xb = @B*box.z
+						yb =  @B*box.z
+						xa = 0 if xa<0
+						ya = 0 if ya<0
+						xb = 0 if xb<0
+						yb = 0 if yb<0
 						cx.drawImage image,
-							box.x+@B*.5-@B*.5*box.z, box.y+@B*.5-@B*.5*box.z,
-							@B*box.z,@B*box.z,
-							box.x+@B*.5-@B*.5*box.z, box.y+@B*.5-@B*.5*box.z,
-							@B*box.z,@B*box.z
+							xa, ya,
+							xb,yb,
+							xa, ya,
+							xb,yb
 				@curAlpha = 0
 				if @lastRec
 					if Math.round(@lastRec.z*1000)>=1000
@@ -214,13 +223,34 @@ class CardWidget
 					do (box) =>
 						box.z += (1-box.z) * .13
 						cx.globalAlpha = 1
+						###
 						cx.drawImage image,
 							box.x+@B*.5-@B*.5*box.z, box.y+@B*.5-@B*.5*box.z,
 							@B*box.z,@B*box.z,
 							box.x+@B*.5-@B*.5*box.z, box.y+@B*.5-@B*.5*box.z,
 							@B*box.z,@B*box.z
+						###
+						xa = box.x+@B*.5-@B*.5*box.z
+						ya = box.y+@B*.5-@B*.5*box.z
+						xb = @B*box.z
+						yb =  @B*box.z
+						xa = 0 if xa<0
+						ya = 0 if ya<0
+						xb = 0 if xb<0
+						yb = 0 if yb<0
+						cx.drawImage image,
+							xa, ya,
+							xb,yb,
+							xa, ya,
+							xb,yb
 						cx.globalAlpha = 1 - box.z
-						cx.strokeRect box.x+1,box.y+1, @B-2,@B-2
+						#cx.strokeRect box.x+1,box.y+1, @B-2,@B-2
+						xa = box.x+1
+						ya = box.y+1
+						xa = 0 if xa<0
+						ya = 0 if ya<0
+						if @recs.length>1
+							cx.strokeRect xa,ya, @B-2,@B-2
 				@curAlpha = 0
 				if @lastRec
 					if Math.round(@lastRec.z*1000)>=1000
